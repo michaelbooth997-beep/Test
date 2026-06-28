@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ah Ah Ah...</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      overflow: hidden;
+    }
+
+    /* CRT scanline overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.18) 2px,
+        rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .screen {
+      background: #0a1a0a;
+      border: 6px solid #1a3a1a;
+      border-radius: 8px;
+      width: min(700px, 95vw);
+      box-shadow:
+        0 0 0 2px #0f2a0f,
+        0 0 40px rgba(0, 255, 60, 0.25),
+        0 0 80px rgba(0, 255, 60, 0.08),
+        inset 0 0 60px rgba(0,0,0,0.5);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Title bar */
+    .title-bar {
+      background: #0d2b0d;
+      border-bottom: 2px solid #1c4a1c;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .title-bar-text {
+      color: #00c83c;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      flex: 1;
+    }
+
+    .title-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #1c4a1c;
+    }
+
+    /* Nedry face area */
+    .nedry-container {
+      padding: 2rem 2rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .nedry-face {
+      font-size: clamp(5rem, 18vw, 9rem);
+      line-height: 1;
+      filter: drop-shadow(0 0 20px rgba(0,255,60,0.4));
+      animation: bob 2s ease-in-out infinite;
+      user-select: none;
+    }
+
+    @keyframes bob {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50%       { transform: translateY(-8px) rotate(2deg); }
+    }
+
+    /* Main message */
+    .message-area {
+      padding: 1.5rem 2rem 2rem;
+      text-align: center;
+    }
+
+    .ah-text {
+      font-family: 'VT323', 'Courier New', monospace;
+      font-size: clamp(2.4rem, 8vw, 4.5rem);
+      color: #00ff3c;
+      text-shadow:
+        0 0 10px #00ff3c,
+        0 0 30px rgba(0,255,60,0.5);
+      letter-spacing: 0.08em;
+      line-height: 1.1;
+      animation: flicker 4s linear infinite;
+    }
+
+    @keyframes flicker {
+      0%,95%,100% { opacity: 1; }
+      96%          { opacity: 0.7; }
+      97%          { opacity: 1; }
+      98%          { opacity: 0.5; }
+      99%          { opacity: 1; }
+    }
+
+    .sub-text {
+      font-family: 'VT323', monospace;
+      font-size: clamp(1.4rem, 5vw, 2.2rem);
+      color: #00c83c;
+      margin-top: 0.4rem;
+      letter-spacing: 0.06em;
+      text-shadow: 0 0 8px rgba(0,255,60,0.4);
+    }
+
+    /* Terminal prompt */
+    .terminal {
+      margin: 1.5rem 2rem;
+      background: #050f05;
+      border: 1px solid #1c4a1c;
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      text-align: left;
+    }
+
+    .terminal-line {
+      font-size: 0.82rem;
+      color: #00a030;
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.04em;
+    }
+
+    .terminal-line.green { color: #00ff3c; }
+    .terminal-line.dim   { color: #005a1a; }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1em;
+      background: #00ff3c;
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0; }
+    }
+
+    /* Access denied badge */
+    .access-denied {
+      display: inline-block;
+      border: 2px solid #ff2200;
+      color: #ff2200;
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      padding: 0.25rem 0.9rem;
+      border-radius: 3px;
+      text-shadow: 0 0 8px rgba(255,34,0,0.5);
+      box-shadow: 0 0 10px rgba(255,34,0,0.2);
+      margin-bottom: 0.5rem;
+      animation: pulse-red 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-red {
+      0%,100% { box-shadow: 0 0 10px rgba(255,34,0,0.2); }
+      50%      { box-shadow: 0 0 20px rgba(255,34,0,0.5); }
+    }
+
+    /* Bottom bar */
+    .bottom-bar {
+      background: #0d2b0d;
+      border-top: 2px solid #1c4a1c;
+      padding: 0.6rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .bottom-bar span {
+      font-size: 0.72rem;
+      color: #005a1a;
+      letter-spacing: 0.08em;
+    }
+
+    .bottom-bar .status {
+      color: #ff2200;
+      animation: pulse-red 1.5s ease-in-out infinite;
+    }
+
+    /* Back link */
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #005a1a;
+      font-size: 0.78rem;
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: #00ff3c; }
+
+    /* Vignette */
+    .screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
+      pointer-events: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+  <div>
+    <div class="screen">
+      <div class="title-bar">
+        <div class="title-dot"></div>
+        <div class="title-dot"></div>
+        <div class="title-dot"></div>
+        <span class="title-bar-text">INGEN CORPORATION — SECURITY SYSTEM v4.1 // ISLA NUBLAR</span>
+      </div>
+
+      <div class="nedry-container">
+        <div class="nedry-face">😄</div>
+      </div>
+
+      <div class="message-area">
+        <div class="access-denied">⛔ ACCESS DENIED ⛔</div>
+        <div class="ah-text">Ah ah ah...</div>
+        <div class="sub-text">You didn't say the magic word!</div>
+      </div>
+
+      <div class="terminal">
+        <div class="terminal-line dim">// NEDRY SECURITY PROTOCOL ENGAGED</div>
+        <div class="terminal-line">C:\INGEN\SECURITY> verify_access --user=guest</div>
+        <div class="terminal-line" style="color:#ff2200;">ERROR: Authentication failed. Passphrase not provided.</div>
+        <div class="terminal-line dim">// Attempts remaining: 0</div>
+        <div class="terminal-line dim">// Systems locked. Have a nice day :)</div>
+        <div class="terminal-line green">C:\INGEN\SECURITY> <span class="cursor"></span></div>
+      </div>
+
+      <div class="bottom-bar">
+        <span>INGEN BIOTECH 1993</span>
+        <span class="status">● SYSTEM LOCKED</span>
+        <span>NODE: JP-MAIN-01</span>
+      </div>
+    </div>
+
+    <a href="index.html" class="back-link">[ RETURN TO DR. BOOTH'S WEBSITE ]</a>
+  </div>
+
+</body>
+</html>
