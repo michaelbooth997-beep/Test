@@ -43,13 +43,22 @@
       background: #16213e;
       border-radius: 10px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 3rem;
-      font-weight: bold;
+      font-size: 2.8rem;
       cursor: pointer;
       transition: background 0.15s, transform 0.1s;
       user-select: none;
+      line-height: 1;
+    }
+
+    .cell .label {
+      font-size: 0.55rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+      text-transform: uppercase;
     }
 
     .cell:hover:not(.taken) {
@@ -57,12 +66,12 @@
       transform: scale(1.05);
     }
 
-    .cell.x { color: #e94560; }
-    .cell.o { color: #a8dadc; }
+    .cell.trump .label { color: #e94560; }
+    .cell.osama .label { color: #a8dadc; }
 
     .cell.win {
       background: #0f3460;
-      box-shadow: 0 0 12px rgba(233, 69, 96, 0.6);
+      box-shadow: 0 0 14px rgba(233, 69, 96, 0.7);
     }
 
     #reset {
@@ -83,7 +92,7 @@
       display: flex;
       gap: 2rem;
       margin-bottom: 1.5rem;
-      font-size: 1rem;
+      font-size: 0.9rem;
       color: #aaa;
     }
 
@@ -95,12 +104,12 @@
   <h1>Tic Tac Toe</h1>
 
   <div id="score">
-    <span>X Wins<strong id="xScore">0</strong></span>
+    <span>🎩 Trump Wins<strong id="trumpScore">0</strong></span>
     <span>Draws<strong id="drawScore">0</strong></span>
-    <span>O Wins<strong id="oScore">0</strong></span>
+    <span>🧔 Osama Wins<strong id="osamaScore">0</strong></span>
   </div>
 
-  <div id="status">Player X's turn</div>
+  <div id="status"></div>
 
   <div id="board">
     <div class="cell" data-i="0"></div>
@@ -117,42 +126,55 @@
   <button id="reset">New Game</button>
 
   <script>
+    const PLAYERS = {
+      T: { emoji: '🎩', name: 'Trump',  cls: 'trump', label: 'Trump' },
+      O: { emoji: '🧔', name: 'Osama',  cls: 'osama', label: 'Osama' },
+    };
+
     const cells = document.querySelectorAll('.cell');
     const status = document.getElementById('status');
-    const xScoreEl = document.getElementById('xScore');
-    const oScoreEl = document.getElementById('oScore');
-    const drawScoreEl = document.getElementById('drawScore');
+    const trumpScoreEl = document.getElementById('trumpScore');
+    const osamaScoreEl = document.getElementById('osamaScore');
+    const drawScoreEl  = document.getElementById('drawScore');
 
     const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
 
     let board = Array(9).fill('');
-    let current = 'X';
+    let current = 'T';
     let gameOver = false;
-    let score = { X: 0, O: 0, D: 0 };
+    let score = { T: 0, O: 0, D: 0 };
+
+    function setStatus(msg) { status.textContent = msg; }
+
+    function renderTurn() {
+      const p = PLAYERS[current];
+      setStatus(`${p.emoji} ${p.name}'s turn`);
+    }
 
     cells.forEach(cell => cell.addEventListener('click', () => {
       const i = +cell.dataset.i;
       if (gameOver || board[i]) return;
 
+      const p = PLAYERS[current];
       board[i] = current;
-      cell.textContent = current;
-      cell.classList.add('taken', current.toLowerCase());
+      cell.innerHTML = `<span>${p.emoji}</span><span class="label">${p.label}</span>`;
+      cell.classList.add('taken', p.cls);
 
       const winLine = getWin();
       if (winLine) {
         winLine.forEach(j => cells[j].classList.add('win'));
-        status.textContent = `Player ${current} wins!`;
+        setStatus(`${p.emoji} ${p.name} wins! 🎉`);
         score[current]++;
         updateScore();
         gameOver = true;
       } else if (board.every(v => v)) {
-        status.textContent = "It's a draw!";
+        setStatus("It's a draw! 🤝");
         score.D++;
         updateScore();
         gameOver = true;
       } else {
-        current = current === 'X' ? 'O' : 'X';
-        status.textContent = `Player ${current}'s turn`;
+        current = current === 'T' ? 'O' : 'T';
+        renderTurn();
       }
     }));
 
@@ -163,21 +185,23 @@
     }
 
     function updateScore() {
-      xScoreEl.textContent = score.X;
-      oScoreEl.textContent = score.O;
-      drawScoreEl.textContent = score.D;
+      trumpScoreEl.textContent = score.T;
+      osamaScoreEl.textContent = score.O;
+      drawScoreEl.textContent  = score.D;
     }
 
     function reset() {
       board = Array(9).fill('');
-      current = 'X';
+      current = 'T';
       gameOver = false;
-      status.textContent = "Player X's turn";
       cells.forEach(cell => {
-        cell.textContent = '';
+        cell.innerHTML = '';
         cell.className = 'cell';
       });
+      renderTurn();
     }
+
+    renderTurn();
   </script>
 </body>
 </html>
