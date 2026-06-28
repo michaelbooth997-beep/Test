@@ -81,11 +81,22 @@
     }
 
     .nedry-face {
-      font-size: clamp(5rem, 18vw, 9rem);
-      line-height: 1;
-      filter: drop-shadow(0 0 20px rgba(0,255,60,0.4));
+      width: clamp(140px, 35vw, 200px);
+      height: clamp(140px, 35vw, 200px);
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center top;
+      filter:
+        drop-shadow(0 0 18px rgba(0,255,60,0.5))
+        saturate(0.15)
+        brightness(1.1)
+        sepia(0.2)
+        hue-rotate(90deg);
+      border: 3px solid #00ff3c;
+      box-shadow: 0 0 0 4px #0a1a0a, 0 0 30px rgba(0,255,60,0.3);
       animation: bob 2s ease-in-out infinite;
       user-select: none;
+      display: block;
     }
 
     @keyframes bob {
@@ -241,7 +252,7 @@
       </div>
 
       <div class="nedry-container">
-        <div class="nedry-face">😄</div>
+        <img src="dr_booth_photo.jpg" alt="Ah ah ah" class="nedry-face">
       </div>
 
       <div class="message-area">
