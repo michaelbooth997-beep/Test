@@ -284,7 +284,7 @@
     }
 
     .about-photo-placeholder {
-      background: linear-gradient(145deg, #c8c8c8 0%, #a0a0a0 100%);
+      background: linear-gradient(160deg, var(--scarlet-dark) 0%, #6b0000 60%, #3a0000 100%);
       border-radius: 12px;
       aspect-ratio: 3/4;
       display: flex;
@@ -292,15 +292,52 @@
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 5rem;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
     }
 
-    .about-photo-placeholder span {
-      font-size: 0.9rem;
-      margin-top: 0.75rem;
-      font-weight: 600;
+    .about-photo-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .about-initials {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 3px solid rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font);
+      font-size: 3rem;
+      font-weight: 700;
+      color: white;
       letter-spacing: 0.05em;
+      margin-bottom: 1.25rem;
+    }
+
+    .about-photo-placeholder .photo-name {
+      position: relative;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.04em;
+      font-family: var(--font);
+      margin-bottom: 0.3rem;
+    }
+
+    .about-photo-placeholder .photo-title {
+      position: relative;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .about-text h2 { margin-bottom: 1rem; }
@@ -797,8 +834,9 @@
     <div class="section-inner">
       <div class="about-grid">
         <div class="about-photo-placeholder">
-          🩺
-          <span>Dr. Michael Booth</span>
+          <div class="about-initials">MB</div>
+          <div class="photo-name">Michael Booth, M.D.</div>
+          <div class="photo-title">Adult Reconstruction Surgery</div>
         </div>
         <div class="about-text">
           <div class="section-label">Meet Your Surgeon</div>
